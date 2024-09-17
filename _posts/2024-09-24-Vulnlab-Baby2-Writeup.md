@@ -175,6 +175,7 @@ Using `Carl.Moore`'s credentials, I started to perform some authenticated domain
 nxc ldap 10.10.68.49 -u Carl.Moore -p Carl.Moore --bloodhound -ns 10.10.68.49 -c All
 ```
 ![[Pasted image 20240917203236.png]](../img/5.png)
+
 Every user has a logonscript where we can replace it with our own. 
 
 **A logon script is a script that is executed under the context of a given user when that user logs into a computer in an Active Directory environment.**
