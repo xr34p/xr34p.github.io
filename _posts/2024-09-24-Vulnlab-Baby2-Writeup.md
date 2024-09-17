@@ -150,11 +150,13 @@ MapNetworkShare "\\dc.baby2.vl\apps", "V"
 MapNetworkShare "\\dc.baby2.vl\docs", "L"
 ```
 Inside the `apps` share there was a `dev` directory and also a `login.vbs.lnk` file:
+
 ![[Pasted image 20240917201134.png]](../img/2.png)
 
 I ran strings on it, because if you try to cat it, your shell will break:
 
 ![[Pasted image 20240917201205.png]](../img/3.png)
+
 I couldn't find any more useful information, so I tried uploading malicious vbs scripts in the users' directories, along with other techniques to try to get a connection back to my `smbserver` and try to crack a hash(SMB Signing is enabled so you cannot relay the NetNTLM hash), but that didn't happen.
 
 After some time, I moved to password spraying, using the same password as the username, and I got a hit for `Carl.Moore:Carl.Moore` (tbh, I kinda hate these kinds of paths because they are the last things I try but doesn't really matter).
