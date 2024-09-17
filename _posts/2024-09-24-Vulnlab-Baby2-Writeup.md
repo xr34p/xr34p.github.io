@@ -186,27 +186,33 @@ The following misconfigurations can be found in logon scripts:
 This issue occurs **when the logon script itself, or perhaps the _NETLOGON_ share, is misconfigured such that it allows _Authenticated Users, Everyone, and/or Domain Users_ _write_ or _modification_ rights**. You can imagine that if any given user can modify any given logon script, the results could be pretty bad. This would allow for code execution, lateral movement, and even privilege escalation, all with built-in tools and very little in the way of out-of-the-box detection.
 
 My first attempt was trying to point the script to my share, so I can get the NetNTLMv2 hash, but I got a weird response and couldn't really crack it:
+
 ![[Pasted image 20240917203319.png]](../img/6.png)
 ## Exploitation
 I modified `login.vbs` and used a payload from `revshells.com` to get a reverse shell:
+
 ![[Pasted image 20240917203722.png]](../img/7.png)
 After a bit of waiting, I got a reverse shell!
+
 ![[Pasted image 20240917203747.png]](../img/8.png)
 # Privilege Escalation
 Running `whoami /groups`, we can see `Amelia.Griffiths` is part of 2 custom groups which are `legacy` and `office`.
 
 Checking `legacy` in `bloodhound`, we can see we have `WriteDacl` and `WriteOwner` permissions over `gpoadm` and over `gpo-management@baby2.vl`:
+
 ![[Pasted image 20240917205402.png]](../img/9.png)
 First, I used `powerview` to give my `legacy` group `GenericAll` permissions:
 ```
 Add-DomainObjectAcl -TargetIdentity "GPOADM" -PrincipalIdentity legacy -Domain baby2.vl -Rights All -Verbose
 ```
 ![[Pasted image 20240917211130.png]](../img/10.png)
+
 Changing `gpoadm`'s password:
 ```
 Set-ADAccountPassword -Identity 'CN=GPOADM,OU=GPO-MANAGEMENT,DC=BABY2,DC=VL' -Reset -NewPassword (ConvertTo-SecureString -AsPlainText "Password1@" -Force)
 ```
 After owning the `gpoadm` user, I could use `pyGPOabuse` using the ID of gpos, to create a new administrator account and use `evil-winrm` to log in:
+
 ![[Pasted image 20240917211306.png]](../img/11.png)
 This tool created a new local administrator with the user `john` and the password of `Hax00r123..`
 ```
