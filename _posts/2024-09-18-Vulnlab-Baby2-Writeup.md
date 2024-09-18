@@ -223,8 +223,12 @@ evil-winrm -i 10.10.68.49 -u john -p H4x00r123..
 ```
 ![[Pasted image 20240917223306.png]](../img/12.png)
 Thank you for reading my blog post and I will see you in the next one !
-https://api.vulnlab.com/api/v1/share?id=a92e58d3-e2f0-49fc-931d-6dae9d0b997f
+
+[https://api.vulnlab.com/api/v1/share?id=a92e58d3-e2f0-49fc-931d-6dae9d0b997f
+](https://api.vulnlab.com/api/v1/share?id=a92e58d3-e2f0-49fc-931d-6dae9d0b997f)
 
 # Resources
-https://www.thehacker.recipes/ad/movement/group-policies
-https://offsec.blog/hidden-menace-how-to-identify-misconfigured-and-dangerous-logon-scripts/
+[https://www.thehacker.recipes/ad/movement/group-policies](https://www.thehacker.recipes/ad/movement/group-policies)
+
+[https://offsec.blog/hidden-menace-how-to-identify-misconfigured-and-dangerous-logon-scripts/
+](https://offsec.blog/hidden-menace-how-to-identify-misconfigured-and-dangerous-logon-scripts/)
