@@ -53,7 +53,7 @@ I sent a request to `/index.php?expertmode=tcp` and my post parameters were `ip=
 
 ![](../img/17.png)
 
-![](../img/18.png)]
+![](../img/18.png)
 
 # Privilege Escalation
 
@@ -76,17 +76,14 @@ python pswm-decrypt.py -f pswm -w /usr/share/wordlists/rockyou.txt
 ```
 ![](../img/21.png)
 
-
 Now I can just login into the box using `aleks'` credentials.
 
 ![](../img/22.png)
-
 
 There is no more privilege escalation needed, once you are `aleks`, you can switch to `root` and read the flag!
 
 ![](../img/23.png)
 
-
 [https://api.vulnlab.com/api/v1/share?id=0bf21cf9-34ee-4739-a5fb-63a538d6e8e3](https://api.vulnlab.com/api/v1/share?id=0bf21cf9-34ee-4739-a5fb-63a538d6e8e3 "https://api.vulnlab.com/api/v1/share?id=0bf21cf9-34ee-4739-a5fb-63a538d6e8e3")
 # Resources
-https://github.com/seriotonctf/pswm-decryptor
+[https://github.com/seriotonctf/pswm-decryptor](https://github.com/seriotonctf/pswm-decryptor)
