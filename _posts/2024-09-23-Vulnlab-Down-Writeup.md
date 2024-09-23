@@ -67,7 +67,7 @@ First of all, stabilize the shell and then run `LinPeas` to look for low hanging
 
 
 Is it base64? Hell nah. It is the encrypted master password for a command line password manager written in python:
-https://github.com/Julynx/pswm
+[https://github.com/Julynx/pswm](https://github.com/Julynx/pswm)
 First time, I thought it is something related to position specific weight matrix and I thought I will have to do some crazy crypto challenge(the thing I hate the most) but this github repo made my life easier:
 https://github.com/seriotonctf/pswm-decryptor
 Decrypting the string:
