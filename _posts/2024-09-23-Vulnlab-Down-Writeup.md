@@ -76,7 +76,7 @@ python pswm-decrypt.py -f pswm -w /usr/share/wordlists/rockyou.txt
 ```
 ![](../img/21.png)
 
-Now I can login into the box using `aleks'` credentials.
+Now I can login into the box using `aleks`' credentials.
 
 ![](../img/22.png)
 
