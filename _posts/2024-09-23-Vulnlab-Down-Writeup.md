@@ -51,7 +51,9 @@ I sent a request to `/index.php?expertmode=tcp` and my post parameters were `ip=
 
 
 # Privilege Escalation
+
 First of all, stabilize the shell and then run `LinPeas` to look for low hanging fruits.
+
 ![](../img/19.png)
 
 
