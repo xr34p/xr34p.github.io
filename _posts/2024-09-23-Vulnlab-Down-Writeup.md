@@ -39,7 +39,6 @@ I tried other methods like using protocols such as `file://` or `gopher://` but 
 If we run `nc` and enter our URL, we can see that the webapp is using `cURL`:
 
 ![](../img/14.png)
-
 # Exploitation
 Useful tip about cURL. Did you know that you can request more than one URL in only one command? Think about the first url being our python webserver and the second URL looks for `file:///etc/passwd` in the target system. That's how we are going to exploit this machine.
 
@@ -59,7 +58,6 @@ I sent a request to `/index.php?expertmode=tcp` and my post parameters were `ip=
 # Privilege Escalation
 
 First of all, stabilize the shell and then run `LinPeas` to look for low hanging fruits.
-
 ![](../img/19.png)
 
 
