@@ -5,6 +5,7 @@ categories: [Vulnlab]
 tags: [Vulnlab, Linux, Web Exploitation]
 ---
 # Description
+
 ![](../img/down_slide.png)
 
 `Down` is an easy Linux box, based on abusing `cURL` by supplying 2 URLs instead of one, bypassing the whitelist. After reading the `index.php` source code, you will find an interesting parameter that will let you run `nc` and you will get a shell as `www-data`. To escalate your privileges, you have to find a `pswm` file which is the `pswm` master password, that will help you decrypt the vault.
