@@ -183,7 +183,7 @@ I got the domain sid using bloodhound:
 
 ![](../img/30.png)
 
-I used ![https://md5decrypt.net/en/Ntlm/](https://md5decrypt.net/en/Ntlm/) to encrypt svc_mssql's password in ntlm.
+I used md5decrypt.net to encrypt svc_mssql's password in ntlm.
 
 Having the information we need, we can now craft the silver ticket using impacket's `ticketer`:
 ```
