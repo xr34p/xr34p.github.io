@@ -221,4 +221,5 @@ Use `SigmaPotato` to get a reverse shell as `SYSTEM`.
 ![https://api.vulnlab.com/api/v1/share?id=6e2075c5-971c-49ae-806a-4deaf1d09577](https://api.vulnlab.com/api/v1/share?id=6e2075c5-971c-49ae-806a-4deaf1d09577)
 # Resources
 ![https://medium.com/greenwolf-security/ntlm-theft-a-file-payload-generator-for-forced-ntlm-hash-disclosure-2d5f1fe5b964](https://medium.com/greenwolf-security/ntlm-theft-a-file-payload-generator-for-forced-ntlm-hash-disclosure-2d5f1fe5b964)
+
 ![https://github.com/tylerdotrar/SigmaPotato](https://github.com/tylerdotrar/SigmaPotato)
