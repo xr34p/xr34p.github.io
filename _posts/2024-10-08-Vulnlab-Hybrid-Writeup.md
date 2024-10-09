@@ -4,6 +4,8 @@ date: "2024-10-08 00:00:00 +0800"
 categories: [Vulnlab]
 tags: [Vulnlab, Active Directory, Red Teaming]
 ---
+# Description
+Hybrid is an Active Directory chained from Vulnlab. You will find an NFS share containing credentials for Roundcube. Find a vulnerable plugin and get a foothold on the box. Hijack a domain user's linux ID to run bash as that user. Check the KeePass database and use the found credentials on the DC. Find an interesting way to abuse AD CS ESC1 and read the root flag.
 # Information Gathering & Enumeration
 Domain Controller nmap scan:
 ```
@@ -150,59 +152,78 @@ Enumerating NFS on `MAIL01`, I've found that I can mount `/opt/share *`:
 ```
 sudo showmount -e mail01.hybrid.vl
 ```
-![[../img/36.png]]
+![](../img/36.png)
+
 Mount the NFS share:
 ```
 sudo mount -t nfs mail01.hybrid.vl:/opt/share ./target-nfs -o nolock
 ```
-![[37.png]]
+![](../img/37.png)
+
 Extracting the backup archive, I've found the following files:
-![[38.png]]
+![](../img/38.png)
+
 Inside `etc/dovecot/dovecot-users` I've found some clear-text credentials:
-![[39.png]]
+![](../img/39.png)
+
 Visiting `http://mail01.hybrid.vl` we can see that the webserver is running `Roundcube` and peter.turner's credentials can be used there.
-![[40.png]]
+![](../img/40.png)
+
 There is an email coming from `admin@hybrid.vl` telling the user that there is a `junk filter` plugin enabled.
-![[41.png]]
+![](../img/41.png)
+
 Clicking on the `About` button, I can see the installed plugins:
-![[42.png]]
+![](../img/42.png)
+
 Remember the mail sent by the administrator. After a bit of researching on `markasjunk` we can see that `Roundcube 1.6.1` is affected if the `markasjunk` plugin is enabled.
 https://cyberthint.io/roundcube-markasjunk-command-injection-vulnerability/
 So, basically you need to change the email identity of the user to something like this:
-![[43.png]]
+![](../img/43.png)
+
 You cannot directly edit from the browser since `Roundcube` will tell you that this is an invalid email address so I used burp suite and that was my request:
-![[44.png]]
+![](../img/44.png)
+
 Send it, mark email as junk, and get the shell.
-![[45.png]]
+![](../img/45.png)
+
 Looking into `/tmp` we can find a ticket for `peter.turner@hybrid.vl`
-![[46.png]]
+![](../img/46.png)
+
 However, you cannot transfer it to your attack box or use it.
 
 Going back to NFS, we can copy a file to the mounted share and we will see that it will appear inside `/opt/share` on the foothold box. 
 On my box `lmao.txt` is owned by `reap`. On `mail01` it is owned by `1001` which is `reap`'s ID on the attack host. 
-![[47.png]]
+![](../img/47.png)
+
 We can try to create a user with `peter`'s id and upload files as him.
 Create new user with id of `peter.turner`:
 ```
 sudo useradd -u 902601108 hybrid
 ```
-![[48.png]]
+![](../img/48.png)
+
 The attack plan is pretty simple. I will copy `/bin/bash` from the foothold to the nfs share. Using the user with `peter`'s id, I will copy it to `/tmp` and copy it back to the share (after deleting the bash file on the share). I will add a SUID bit from the `hybrid` user which has `peter`'s id and I will run it from the foothold box.
-![[49.png]]
+![](../img/49.png)
+
 Execute the bash file with the hijacked ID from the foothold box:
-![[50.png]]
+![](../img/50.png)
+
 Inside `peter.turner@hybrid.vl`'s home directory you can find the first flag and a `passwords.kdbx` keepass database.
 The kdbx file is password protected but you can use peter's password found earlier.
-![[51.png]]
+![](../img/51.png)]
+
 Inside the `.kdbx` file is the password for `peter.turner` on `hybrid.vl`:
-![[52.png]]
+![](../img/52.png)
+
 We can validate that using nxc:
 ```
 nxc smb DC01 -u peter.turner -p 'xxxxxx'
 ```
-![[54.png]]
+![](../img/53.png)
+
 To get the second flag, you can ssh as `peter.turner` and running `sudo -l` you will see that you can run any command as sudo.
-![[53.png]]
+![](../img/54.png)
+
 Collect information for bloodhound:
 ```
 nxc ldap 10.10.220.181 -u peter.turner -p 'xxxx' --bloodhound -c All --dns-server 10.10.220.181
@@ -212,21 +233,26 @@ Find vulnerable certificates:
 ```
 certipy find -vulnerable -u peter.turner@hybrid.vl -p xxxxx -dc-ip 10.10.220.181 -stdout
 ```
-![[55.png]]
+![](../img/55.png)
+
 To be able to request this certificate, we need to be inside `Domain Admins`, `Domain Computers` or `Enterprise Admins` so we cannot just use `peter.turner`. Remember we've already compromised a domain computer which is `MAIL01`.
-![[56.png]]
+![](../img/56.png)
+
 We just need to find the NTLM hash of `MAIL01`, but being on a `Linux` box, we will use `keytabextract`. Don't forget that on Linux domain joined machines, the NTLM hash of the computer account can be found inside `/etc/krb5.keytab`.
-![[57.png]]
+![](../img/57.png)
+
 Extract NTLM hash for `MAIL01$`:
 ```
 python3 keytabextract.py /etc/krb5.keytab
 ```
-![[58.png]]
+![](../img/58.png)
+
 Request certificate to impersonate `administrator`:
 ```
 certipy req -u MAIL01\$@hybrid.vl -hashes 0f916c5246fdbc7ba95dcef4126d57bd -ca hybrid-DC01-CA -template HybridComputers -dc-ip 10.10.220.181 -target DC01 -dns DC01 -upn 'administrator@hybrid.vl' -key-size 4096
 ```
-![[59.png]]
+![](../img/59.png)
+
 ```ad-note
 Specify the keysize or you will encounter the following error: CERTSRV_E_KEY_LENGTH
 ```
@@ -234,12 +260,16 @@ Get TGT using the `.pfx` certificate:
 ```
 certipy auth -pfx administrator_dc01.pfx
 ```
-![[60.png]]
+![](../img/60.png)
+
 Use `impacket-smbclient` to login as administrator and get the root flag:
 ```
 impacket-smbclient -k -no-pass DC01
 ```
-![[61.png]]
-https://api.vulnlab.com/api/v1/share?id=4bacf963-c79e-443d-928c-092802b55556
+![](../img/61.png)
+
+[https://api.vulnlab.com/api/v1/share?id=4bacf963-c79e-443d-928c-092802b55556
+](https://api.vulnlab.com/api/v1/share?id=4bacf963-c79e-443d-928c-092802b55556)
 # Resources
-https://cyberthint.io/roundcube-markasjunk-command-injection-vulnerability/
+[https://api.vulnlab.com/api/v1/share?id=4bacf963-c79e-443d-928c-092802b55556
+](https://cyberthint.io/roundcube-markasjunk-command-injection-vulnerability/)
