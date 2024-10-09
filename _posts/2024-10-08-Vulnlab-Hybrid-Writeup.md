@@ -5,6 +5,7 @@ categories: [Vulnlab]
 tags: [Vulnlab, Active Directory, Red Teaming]
 ---
 ![](../img/hybrid_slide.png)
+
 # Description
 Hybrid is an Active Directory chained from Vulnlab. You will find an NFS share containing credentials for Roundcube. Find a vulnerable plugin and get a foothold on the box. Hijack a domain user's linux ID to run bash as that user. Check the KeePass database and use the found credentials on the DC. Find an interesting way to abuse AD CS ESC1 and read the root flag.
 # Information Gathering & Enumeration
