@@ -7,7 +7,7 @@ tags: [Vulnlab, Active Directory, Red Teaming]
 ![](../img/hybrid_slide.png)
 
 # Description
-Hybrid is an Active Directory chained from Vulnlab. You will find an NFS share containing credentials for Roundcube. Find a vulnerable plugin and get a foothold on the box. Hijack a domain user's linux ID to run bash as that user. Check the KeePass database and use the found credentials on the DC. Find an interesting way to abuse AD CS ESC1 and read the root flag.
+Hybrid is an Active Directory chain from Vulnlab. You will find an NFS share containing credentials for Roundcube. Find a vulnerable plugin and get a foothold on the box. Hijack a domain user's linux ID to run bash as that user. Check the KeePass database and use the found credentials on the DC. Find an interesting way to abuse AD CS ESC1 and read the root flag.
 # Information Gathering & Enumeration
 Domain Controller nmap scan:
 ```
@@ -178,7 +178,8 @@ Clicking on the `About` button, I can see the installed plugins:
 ![](../img/42.png)
 
 Remember the mail sent by the administrator. After a bit of researching on `markasjunk` we can see that `Roundcube 1.6.1` is affected if the `markasjunk` plugin is enabled.
-https://cyberthint.io/roundcube-markasjunk-command-injection-vulnerability/
+[https://cyberthint.io/roundcube-markasjunk-command-injection-vulnerability/](https://cyberthint.io/roundcube-markasjunk-command-injection-vulnerability/).
+
 So, basically you need to change the email identity of the user to something like this:
 ![](../img/43.png)
 
@@ -238,6 +239,7 @@ certipy find -vulnerable -u peter.turner@hybrid.vl -p xxxxx -dc-ip 10.10.220.181
 ![](../img/55.png)
 
 To be able to request this certificate, we need to be inside `Domain Admins`, `Domain Computers` or `Enterprise Admins` so we cannot just use `peter.turner`. Remember we've already compromised a domain computer which is `MAIL01`.
+
 ![](../img/56.png)
 
 We just need to find the NTLM hash of `MAIL01`, but being on a `Linux` box, we will use `keytabextract`. Don't forget that on Linux domain joined machines, the NTLM hash of the computer account can be found inside `/etc/krb5.keytab`.
