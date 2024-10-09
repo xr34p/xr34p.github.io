@@ -4,6 +4,7 @@ date: "2024-10-08 00:00:00 +0800"
 categories: [Vulnlab]
 tags: [Vulnlab, Active Directory, Red Teaming]
 ---
+![](../img/hybrid_slide.png)
 # Description
 Hybrid is an Active Directory chained from Vulnlab. You will find an NFS share containing credentials for Roundcube. Find a vulnerable plugin and get a foothold on the box. Hijack a domain user's linux ID to run bash as that user. Check the KeePass database and use the found credentials on the DC. Find an interesting way to abuse AD CS ESC1 and read the root flag.
 # Information Gathering & Enumeration
@@ -268,8 +269,7 @@ impacket-smbclient -k -no-pass DC01
 ```
 ![](../img/61.png)
 
-[https://api.vulnlab.com/api/v1/share?id=4bacf963-c79e-443d-928c-092802b55556
-](https://api.vulnlab.com/api/v1/share?id=4bacf963-c79e-443d-928c-092802b55556)
+[https://api.vulnlab.com/api/v1/share?id=4bacf963-c79e-443d-928c-092802b55556](https://api.vulnlab.com/api/v1/share?id=4bacf963-c79e-443d-928c-092802b55556)
 # Resources
-[https://api.vulnlab.com/api/v1/share?id=4bacf963-c79e-443d-928c-092802b55556
-](https://cyberthint.io/roundcube-markasjunk-command-injection-vulnerability/)
+[https://cyberthint.io/roundcube-markasjunk-command-injection-vulnerability/](https://cyberthint.io/roundcube-markasjunk-command-injection-vulnerability/)
+[https://www.thegeekdiary.com/basic-nfs-security-nfs-no_root_squash-and-suid/](https://www.thegeekdiary.com/basic-nfs-security-nfs-no_root_squash-and-suid/)
